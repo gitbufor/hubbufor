@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linki - Przeciąganie (Drag & Drop)</title>
+    
+    <!-- 
+      UWAGA: Aby ikony Fontello działały, musisz pobrać pakiet z fontello.com,
+      wgrać folder 'font/fontello' do swojego projektu i odkomentować poniższy link do CSS.
+    -->
+    <!-- <link rel="stylesheet" href="font/fontello/css/fontello.css"> -->
+
+    <style>
+        /* Import czcionki SUSE Mono */
+        @font-face {
+            font-family: 'SUSE Mono';
+            src: url('SUSEMono-Regular.woff2') format('woff2'),
+                 url('SUSEMono-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'SUSE Mono';
+            src: url('SUSEMono-Bold.woff2') format('woff2'),
+                 url('SUSEMono-Bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Paleta kolorów */
+        :root {
+            --base-color: #515954;
+            --light-1: #6B7570;
+            --light-2: #85908A;
+            --light-3: #A69F92;
+            --light-4: #D9D3C1;
+            --light-5: #F2F2F0;
+            --dark-1: #3E4440;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'SUSE Mono', 'Courier New', Courier, monospace;
+            background-color: var(--base-color);
+            color: var(--light-5);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Nagłówek */
+        header {
+            background-color: var(--base-color);
+            color: var(--light-5);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid var(--light-3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.2rem;
+            color: var(--light-4);
+        }
+
+        p.subtitle {
+            font-size: 1rem;
+            color: var(--light-3);
+            opacity: 0.9;
+        }
+
+        /* Główny kontener */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+
+        .intro-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--light-4);
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        /* Grid 5x8 */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.8rem;
+            /* Ważne dla drag and drop w gridzie */
+            grid-auto-flow: dense;
+        }
+
+        /* Stylizacja kafelka z obramowaniem 1px */
+        .link-card {
+            background-color: var(--light-1);
+            border: 1px solid var(--light-3);
+            border-radius: 0;
+            text-decoration: none;
+            transition: all 0.2s ease; /* Szybsza reakcja na drag */
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab; /* Ikona ręki */
+            position: relative;
+            overflow: hidden;
+            box-shadow: none;
+            user-select: none; /* Zapobiega zaznaczaniu tekstu podczas przeciągania */
+        }
+
+        .link-card:active {
+            cursor: grabbing;
+        }
+
+        /* Stan przeciągania */
+        .link-card.dragging {
+            opacity: 0.4;
+            border-color: var(--light-5);
+            transform: scale(0.95);
+        }
+
+        /* Stan nad którym przeciągamy (target) */
+        .link-card.drag-over {
+            border-color: var(--light-5);
+            background-color: var(--light-2);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(242, 242, 240, 0.2);
+        }
+
+        /* Efekt Hover (zwykły) */
+        .link-card:hover:not(.dragging):not(.drag-over) {
+            background-color: var(--light-2);
+            border-color: var(--light-5);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Kontener treści */
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            pointer-events: none; /* Zapobiega blokowaniu zdarzeń myszy przez tekst */
+        }
+
+        /* Ikony */
+        .icon-container {
+            font-size: 3rem;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+            color: var(--light-4);
+            transition: color 0.3s ease;
+        }
+
+        .icon {
+            font-family: 'fontello', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            display: inline-block;
+            width: 1em;
+            text-align: center;
+        }
+
+        /* Teksty */
+        .link-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--light-4);
+            margin-bottom: 0.1rem;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .link-desc {
+            font-size: 0.85rem;
+            color: var(--light-3);
+            font-weight: 400;
+            line-height: 1.3;
+            opacity: 0.9;
+        }
+
+        /* Hover kolory */
+        .link-card:hover .icon-container,
+        .link-card.drag-over .icon-container {
+            color: var(--light-5);
+        }
+
+        .link-card:hover .link-title,
+        .link-card:hover .link-desc,
+        .link-card.drag-over .link-title,
+        .link-card.drag-over .link-desc {
+            color: var(--light-5);
+            font-weight: 700;
+        }
+
+        /* Stopka */
+        footer {
+            background-color: var(--dark-1);
+            color: var(--light-4);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            margin-top: auto;
+            border-top: 1px solid var(--light-3);
+        }
+
+        /* Responsywność */
+        @media (max-width: 1024px) {
+            .links-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .links-grid { grid-template-columns: repeat(3, 1fr); }
+            h1 { font-size: 1.8rem; }
+            .link-card { height: 130px; }
+        }
+        @media (max-width: 480px) {
+            .links-grid { grid-template-columns: repeat(2, 1fr); }
+            .icon-container { font-size: 2.5rem; }
+            .link-title { font-size: 0.95rem; }
+            .link-desc { font-size: 0.75rem; }
+            .link-card { height: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Portal Graficzny</h1>
+        <p class="subtitle">Siatka 5x8 - Przeciągaj kafelki!</p>
+    </header>
+
+    <main>
+        <p class="intro-text">
+            Kliknij i przeciągnij kafelek, aby zmienić jego miejsce.
+        </p>
+
+        <div class="links-grid" id="grid">
+            <!-- RZĄD 1 -->
+            <a href="https://www.google.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-globe"></span></div>
+                    <div class="link-title">Google</div>
+                    <div class="link-desc">Wyszukiwarka</div>
+                </div>
+            </a>
+            <a href="https://github.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-code"></span></div>
+                    <div class="link-title">GitHub</div>
+                    <div class="link-desc">Repozytoria</div>
+                </div>
+            </a>
+            <a href="https://proton.me" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-lock"></span></div>
+                    <div class="link-title">Proton</div>
+                    <div class="link-desc">Bezpieczeństwo</div>
+                </div>
+            </a>
+            <a href="https://wikipedia.org" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-book-open"></span></div>
+                    <div class="link-title">Wikipedia</div>
+                    <div class="link-desc">Encyklopedia</div>
+                </div>
+            </a>
+            <a href="https://news.ycombinator.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-newspaper"></span></div>
+                    <div class="link-title">Hacker News</div>
+                    <div class="link-desc">Tech News</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 2 -->
+            <a href="https://stackoverflow.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-stackoverflow"></span></div>
+                    <div class="link-title">Stack Overflow</div>
+                    <div class="link-desc">Pytania kodu</div>
+                </div>
+            </a>
+            <a href="https://reddit.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-reddit"></span></div>
+                    <div class="link-title">Reddit</div>
+                    <div class="link-desc">Społeczności</div>
+                </div>
+            </a>
+            <a href="https://medium.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-article"></span></div>
+                    <div class="link-title">Medium</div>
+                    <div class="link-desc">Artykuły</div>
+                </div>
+            </a>
+            <a href="https://dev.to" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-users"></span></div>
+                    <div class="link-title">DEV</div>
+                    <div class="link-desc">Społeczność</div>
+                </div>
+            </a>
+            <a href="https://producthunt.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-lightbulb"></span></div>
+                    <div class="link-title">Product Hunt</div>
+                    <div class="link-desc">Nowości</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 3 -->
+            <a href="https://dribbble.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-basket"></span></div>
+                    <div class="link-title">Dribbble</div>
+                    <div class="link-desc">Design</div>
+                </div>
+            </a>
+            <a href="https://behance.net" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-behance"></span></div>
+                    <div class="link-title">Behance</div>
+                    <div class="link-desc">Portfolio</div>
+                </div>
+            </a>
+            <a href="https://figma.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-pencil"></span></div>
+                    <div class="link-title">Figma</div>
+                    <div class="link-desc">UI/UX</div>
+                </div>
+            </a>
+            <a href="https://unsplash.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-camera"></span></div>
+                    <div class="link-title">Unsplash</div>
+                    <div class="link-desc">Zdjęcia</div>
+                </div>
+            </a>
+            <a href="https://pexels.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-picture"></span></div>
+                    <div class="link-title">Pexels</div>
+                    <div class="link-desc">Media</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 4 -->
+            <a href="https://youtube.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-youtube-play"></span></div>
+                    <div class="link-title">YouTube</div>
+                    <div class="link-desc">Wideo</div>
+                </div>
+            </a>
+            <a href="https://vimeo.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-vimeo"></span></div>
+                    <div class="link-title">Vimeo</div>
+                    <div class="link-desc">Pro wideo</div>
+                </div>
+            </a>
+            <a href="https://twitch.tv" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-twitch"></span></div>
+                    <div class="link-title">Twitch</div>
+                    <div class="link-desc">Live</div>
+                </div>
+            </a>
+            <a href="https://spotify.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-music"></span></div>
+                    <div class="link-title">Spotify</div>
+                    <div class="link-desc">Muzyka</div>
+                </div>
+            </a>
+            <a href="https://soundcloud.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-soundcloud"></span></div>
+                    <div class="link-title">SoundCloud</div>
+                    <div class="link-desc">Audio</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 5 -->
+            <a href="https://twitter.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-twitter"></span></div>
+                    <div class="link-title">Twitter / X</div>
+                    <div class="link-desc">Social</div>
+                </div>
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-linkedin"></span></div>
+                    <div class="link-title">LinkedIn</div>
+                    <div class="link-desc">Biznes</div>
+                </div>
+            </a>
+            <a href="https://instagram.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-instagram"></span></div>
+                    <div class="link-title">Instagram</div>
+                    <div class="link-desc">Foto</div>
+                </div>
+            </a>
+            <a href="https://discord.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-chat"></span></div>
+                    <div class="link-title">Discord</div>
+                    <div class="link-desc">Chat</div>
+                </div>
+            </a>
+            <a href="https://slack.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-briefcase"></span></div>
+                    <div class="link-title">Slack</div>
+                    <div class="link-desc">Praca</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 6 -->
+            <a href="https://canva.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-palette"></span></div>
+                    <div class="link-title">Canva</div>
+                    <div class="link-desc">Grafika online</div>
+                </div>
+            </a>
+            <a href="https://notion.so" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-notebook"></span></div>
+                    <div class="link-title">Notion</div>
+                    <div class="link-desc">Notatki i baza</div>
+                </div>
+            </a>
+            <a href="https://trello.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-tasks"></span></div>
+                    <div class="link-title">Trello</div>
+                    <div class="link-desc">Zarządzanie</div>
+                </div>
+            </a>
+            <a href="https://zoom.us" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-video-camera"></span></div>
+                    <div class="link-title">Zoom</div>
+                    <div class="link-desc">Wideokonferencje</div>
+                </div>
+            </a>
+            <a href="https://dropbox.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-cloud-upload"></span></div>
+                    <div class="link-title">Dropbox</div>
+                    <div class="link-desc">Chmura</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 7 -->
+            <a href="https://aws.amazon.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-server"></span></div>
+                    <div class="link-title">AWS</div>
+                    <div class="link-desc">Chmura Amazon</div>
+                </div>
+            </a>
+            <a href="https://azure.microsoft.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-windows"></span></div>
+                    <div class="link-title">Azure</div>
+                    <div class="link-desc">Chmura Microsoft</div>
+                </div>
+            </a>
+            <a href="https://digitalocean.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-droplet"></span></div>
+                    <div class="link-title">DigitalOcean</div>
+                    <div class="link-desc">Serwery VPS</div>
+                </div>
+            </a>
+            <a href="https://heroku.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-rocket"></span></div>
+                    <div class="link-title">Heroku</div>
+                    <div class="link-desc">Platforma PaaS</div>
+                </div>
+            </a>
+            <a href="https://netlify.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-triangle"></span></div>
+                    <div class="link-title">Netlify</div>
+                    <div class="link-desc">Hosting statyczny</div>
+                </div>
+            </a>
+
+            <!-- RZĄD 8 -->
+            <a href="https://wordpress.org" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-wordpress"></span></div>
+                    <div class="link-title">WordPress</div>
+                    <div class="link-desc">CMS</div>
+                </div>
+            </a>
+            <a href="https://shopify.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-shopping-cart"></span></div>
+                    <div class="link-title">Shopify</div>
+                    <div class="link-desc">Sklep online</div>
+                </div>
+            </a>
+            <a href="https://mailchimp.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-envelope"></span></div>
+                    <div class="link-title">Mailchimp</div>
+                    <div class="link-desc">Newslettery</div>
+                </div>
+            </a>
+            <a href="https://analytics.google.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-chart-bar"></span></div>
+                    <div class="link-title">Analytics</div>
+                    <div class="link-desc">Statystyki</div>
+                </div>
+            </a>
+            <a href="https://stripe.com" target="_blank" class="link-card" draggable="true">
+                <div class="card-content">
+                    <div class="icon-container"><span class="icon icon-credit-card"></span></div>
+                    <div class="link-title">Stripe</div>
+                    <div class="link-desc">Płatności</div>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 Projekt Web Design. Drag & Drop aktywny.
+    </footer>
+
+    <script>
+        // Logika Drag and Drop
+        const cards = document.querySelectorAll('.link-card');
+        const grid = document.getElementById('grid');
+
+        let draggedCard = null;
+
+        cards.forEach(card => {
+            // Start przeciągania
+            card.addEventListener('dragstart', () => {
+                draggedCard = card;
+                setTimeout(() => {
+                    card.classList.add('dragging');
+                }, 0);
+            });
+
+            // Koniec przeciągania
+            card.addEventListener('dragend', () => {
+                draggedCard = null;
+                card.classList.remove('dragging');
+                // Usuń klasę drag-over ze wszystkich kafelków po upuszczeniu
+                document.querySelectorAll('.link-card').forEach(c => c.classList.remove('drag-over'));
+            });
+
+            // Przeciąganie nad innym kafelkiem
+            card.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Konieczne, aby umożliwić drop
+                if (card !== draggedCard) {
+                    card.classList.add('drag-over');
+                }
+            });
+
+            // Opuszczenie myszy
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+
+            // Upuszczenie
+            card.addEventListener('drop', () => {
+                if (draggedCard && draggedCard !== card) {
+                    card.classList.remove('drag-over');
+                    
+                    // Zamiana miejsc w DOM
+                    // Pobieramy wszystkie kafelki w bieżącej kolejności
+                    const allCards = Array.from(grid.children);
+                    const draggedIndex = allCards.indexOf(draggedCard);
+                    const targetIndex = allCards.indexOf(card);
+
+                    if (draggedIndex < targetIndex) {
+                        grid.insertBefore(draggedCard, card.nextSibling);
+                    } else {
+                        grid.insertBefore(draggedCard, card);
+                    }
+                }
+            });
+        });
+
+        // Obsługa przypadku upuszczenia w pustą przestrzeń siatki (opcjonalne, dla lepszej UX)
+        grid.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+        
+        grid.addEventListener('drop', (e) => {
+            if (e.target === grid && draggedCard) {
+                grid.appendChild(draggedCard); // Przenieś na koniec
+                draggedCard.classList.remove('dragging');
+            }
+        });
+    </script>
+</body>
+</html>
