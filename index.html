@@ -122,9 +122,11 @@
       flex-shrink: 0;
     }
 
-    .cat-tools .dot { background: #4a9eff; }
-    .cat-news  .dot { background: #3fcf7a; }
-    .cat-local .dot { background: #e09a2e; }
+    .cat-tools   .dot { background: #4a9eff; }
+    .cat-news    .dot { background: #3fcf7a; }
+    .cat-local   .dot { background: #e09a2e; }
+    .cat-shop    .dot { background: #ff7255; }
+    .cat-entert  .dot { background: #a48cff; }
 
     /* ── grid ── */
     .grid {
@@ -156,9 +158,11 @@
 
     .grid a:active { transform: translateY(0); }
 
-    .cat-tools .grid a:hover { border-left-color: #4a9eff; }
-    .cat-news  .grid a:hover { border-left-color: #3fcf7a; }
-    .cat-local .grid a:hover { border-left-color: #e09a2e; }
+    .cat-tools  .grid a:hover { border-left-color: #4a9eff; }
+    .cat-news   .grid a:hover { border-left-color: #3fcf7a; }
+    .cat-local  .grid a:hover { border-left-color: #e09a2e; }
+    .cat-shop   .grid a:hover { border-left-color: #ff7255; }
+    .cat-entert .grid a:hover { border-left-color: #a48cff; }
 
     /* ── drag handle (hidden by default) ── */
     .drag-handle {
@@ -186,15 +190,14 @@
 
     body.edit-mode .grid a {
       cursor: default;
-      pointer-events: none;   /* disable link click */
+      pointer-events: none;
     }
 
     body.edit-mode .grid a .drag-handle {
-      pointer-events: all;    /* re-enable handle */
+      pointer-events: all;
       cursor: grab;
     }
 
-    /* Sortable ghost & drag state */
     .sortable-ghost {
       opacity: 0.3;
       background: #1a1a1a !important;
@@ -211,7 +214,6 @@
       z-index: 999;
     }
 
-    /* edit-mode tile highlight */
     body.edit-mode .grid a {
       border-color: #252525;
     }
@@ -296,74 +298,6 @@
 
   <div class="edit-hint">&#9432;&nbsp; Przeciągnij kafelki za uchwyt (&#8942;) aby zmienić ich kolejność. Kolejność jest zapisywana automatycznie.</div>
 
-  <!-- NARZĘDZIA -->
-  <div class="section cat-tools">
-    <div class="section-label"><div class="dot"></div><span>Narzędzia</span></div>
-    <div class="grid" id="grid-tools">
-
-      <a href="https://www.google.pl" target="_blank" data-id="google">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-blue">&#9679;</div>
-        <div class="link-text"><strong>Google</strong><span>Wyszukiwarka</span></div>
-      </a>
-
-      <a href="https://github.com" target="_blank" data-id="github">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-purple">&#123;&#125;</div>
-        <div class="link-text"><strong>GitHub</strong><span>Repozytoria kodu</span></div>
-      </a>
-
-      <a href="https://freefilesync.org/" target="_blank" data-id="freefilesync">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-blue">&#8651;</div>
-        <div class="link-text"><strong>FreeFileSync</strong><span>Synchronizacja plików</span></div>
-      </a>
-
-      <a href="https://veracrypt.io/en/Home.html" target="_blank" data-id="veracrypt">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-teal">&#128274;</div>
-        <div class="link-text"><strong>VeraCrypt</strong><span>Szyfrowanie dysków</span></div>
-      </a>
-
-      <a href="https://www.videolan.org/" target="_blank" data-id="vlc">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-coral">&#9654;</div>
-        <div class="link-text"><strong>VLC</strong><span>Odtwarzacz multimedialny</span></div>
-      </a>
-
-      <a href="https://www.betterbird.eu/donate/" target="_blank" data-id="betterbird">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-amber">&#9993;</div>
-        <div class="link-text"><strong>Betterbird</strong><span>Klient poczty e-mail</span></div>
-      </a>
-
-      <a href="https://tinywow.com/tools" target="_blank" data-id="tinywow">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-rose">&#9889;</div>
-        <div class="link-text"><strong>TinyWow</strong><span>Narzędzia online</span></div>
-      </a>
-
-      <a href="https://www.youtube.com" target="_blank" data-id="youtube">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-coral">&#9654;</div>
-        <div class="link-text"><strong>YouTube</strong><span>Wideo i muzyka</span></div>
-      </a>
-
-      <a href="https://www.amazon.pl/" target="_blank" data-id="amazon">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-amber">&#9673;</div>
-        <div class="link-text"><strong>Amazon</strong><span>Sklep internetowy</span></div>
-      </a>
-
-      <a href="https://www.anthropic.com" target="_blank" data-id="anthropic">
-        <span class="drag-handle">&#8942;&#8942;</span>
-        <div class="icon ic-purple">&#9651;</div>
-        <div class="link-text"><strong>Anthropic</strong><span>Badania AI</span></div>
-      </a>
-
-    </div>
-  </div>
-
   <!-- INFORMACYJNE -->
   <div class="section cat-news">
     <div class="section-label"><div class="dot"></div><span>Informacyjne</span></div>
@@ -428,21 +362,166 @@
     </div>
   </div>
 
+  <!-- ZAKUPY -->
+  <div class="section cat-shop">
+    <div class="section-label"><div class="dot"></div><span>Zakupy</span></div>
+    <div class="grid" id="grid-shop">
+
+      <a href="https://www.amazon.pl/" target="_blank" data-id="amazon">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-amber">&#9673;</div>
+        <div class="link-text"><strong>Amazon</strong><span>Sklep internetowy</span></div>
+      </a>
+
+      <a href="https://www.allegro.pl/" target="_blank" data-id="allegro">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-coral">&#9679;</div>
+        <div class="link-text"><strong>Allegro</strong><span>Największy polski sklep</span></div>
+      </a>
+
+      <a href="https://www.olx.pl/" target="_blank" data-id="olx">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-green">&#9650;</div>
+        <div class="link-text"><strong>OLX</strong><span>Ogłoszenia kupię / sprzedam</span></div>
+      </a>
+
+      <a href="https://www.ceneo.pl/" target="_blank" data-id="ceneo">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-blue">&#9660;</div>
+        <div class="link-text"><strong>Ceneo</strong><span>Porównywarka cen</span></div>
+      </a>
+
+      <a href="https://www.empik.com/" target="_blank" data-id="empik">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-rose">&#9632;</div>
+        <div class="link-text"><strong>Empik</strong><span>Książki, muzyka, elektronika</span></div>
+      </a>
+
+      <a href="https://www.morele.net/" target="_blank" data-id="morele">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-purple">&#9670;</div>
+        <div class="link-text"><strong>Morele.net</strong><span>Elektronika i sprzęt RTV</span></div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ROZRYWKA -->
+  <div class="section cat-entert">
+    <div class="section-label"><div class="dot"></div><span>Rozrywka</span></div>
+    <div class="grid" id="grid-entert">
+
+      <a href="https://www.youtube.com" target="_blank" data-id="youtube">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-coral">&#9654;</div>
+        <div class="link-text"><strong>YouTube</strong><span>Wideo i muzyka</span></div>
+      </a>
+
+      <a href="https://www.netflix.com/" target="_blank" data-id="netflix">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-coral">&#9646;</div>
+        <div class="link-text"><strong>Netflix</strong><span>Filmy i seriale online</span></div>
+      </a>
+
+      <a href="https://www.player.pl/" target="_blank" data-id="player">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-rose">&#9654;</div>
+        <div class="link-text"><strong>Player.pl</strong><span>TVN — filmy i seriale</span></div>
+      </a>
+
+      <a href="https://www.tvp.pl/" target="_blank" data-id="tvp">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-blue">&#9632;</div>
+        <div class="link-text"><strong>TVP VOD</strong><span>Telewizja Polska online</span></div>
+      </a>
+
+      <a href="https://open.spotify.com/" target="_blank" data-id="spotify">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-green">&#9836;</div>
+        <div class="link-text"><strong>Spotify</strong><span>Muzyka i podcasty</span></div>
+      </a>
+
+      <a href="https://www.filmweb.pl/" target="_blank" data-id="filmweb">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-amber">&#9733;</div>
+        <div class="link-text"><strong>Filmweb</strong><span>Baza filmów i recenzje</span></div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- NARZĘDZIA -->
+  <div class="section cat-tools">
+    <div class="section-label"><div class="dot"></div><span>Narzędzia</span></div>
+    <div class="grid" id="grid-tools">
+
+      <a href="https://www.google.pl" target="_blank" data-id="google">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-blue">&#9679;</div>
+        <div class="link-text"><strong>Google</strong><span>Wyszukiwarka</span></div>
+      </a>
+
+      <a href="https://github.com" target="_blank" data-id="github">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-purple">&#123;&#125;</div>
+        <div class="link-text"><strong>GitHub</strong><span>Repozytoria kodu</span></div>
+      </a>
+
+      <a href="https://freefilesync.org/" target="_blank" data-id="freefilesync">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-blue">&#8651;</div>
+        <div class="link-text"><strong>FreeFileSync</strong><span>Synchronizacja plików</span></div>
+      </a>
+
+      <a href="https://veracrypt.io/en/Home.html" target="_blank" data-id="veracrypt">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-teal">&#128274;</div>
+        <div class="link-text"><strong>VeraCrypt</strong><span>Szyfrowanie dysków</span></div>
+      </a>
+
+      <a href="https://www.videolan.org/" target="_blank" data-id="vlc">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-coral">&#9654;</div>
+        <div class="link-text"><strong>VLC</strong><span>Odtwarzacz multimedialny</span></div>
+      </a>
+
+      <a href="https://www.betterbird.eu/donate/" target="_blank" data-id="betterbird">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-amber">&#9993;</div>
+        <div class="link-text"><strong>Betterbird</strong><span>Klient poczty e-mail</span></div>
+      </a>
+
+      <a href="https://tinywow.com/tools" target="_blank" data-id="tinywow">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-rose">&#9889;</div>
+        <div class="link-text"><strong>TinyWow</strong><span>Narzędzia online</span></div>
+      </a>
+
+      <a href="https://www.anthropic.com" target="_blank" data-id="anthropic">
+        <span class="drag-handle">&#8942;&#8942;</span>
+        <div class="icon ic-purple">&#9651;</div>
+        <div class="link-text"><strong>Anthropic</strong><span>Badania AI</span></div>
+      </a>
+
+    </div>
+  </div>
+
   <footer>&copy; 2026 &mdash; Moja Strona</footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
   <script>
     const GRIDS = [
-      { el: document.getElementById('grid-tools'), key: 'order-tools' },
-      { el: document.getElementById('grid-news'),  key: 'order-news'  },
-      { el: document.getElementById('grid-local'), key: 'order-local' },
+      { el: document.getElementById('grid-news'),   key: 'order-news'   },
+      { el: document.getElementById('grid-local'),  key: 'order-local'  },
+      { el: document.getElementById('grid-shop'),   key: 'order-shop'   },
+      { el: document.getElementById('grid-entert'), key: 'order-entert' },
+      { el: document.getElementById('grid-tools'),  key: 'order-tools'  },
     ];
 
     const btnEdit  = document.getElementById('btn-edit');
     const btnReset = document.getElementById('btn-reset');
     let editMode = false;
 
-    /* ── apply saved order ── */
     function applyOrder(grid, key) {
       const saved = localStorage.getItem(key);
       if (!saved) return;
@@ -452,13 +531,11 @@
       ids.forEach(id => { if (map[id]) grid.appendChild(map[id]); });
     }
 
-    /* ── save order ── */
     function saveOrder(grid, key) {
       const ids = [...grid.children].map(el => el.dataset.id);
       localStorage.setItem(key, JSON.stringify(ids));
     }
 
-    /* ── init Sortable for each grid ── */
     GRIDS.forEach(({ el, key }) => {
       applyOrder(el, key);
       Sortable.create(el, {
@@ -466,12 +543,11 @@
         animation: 160,
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
-        disabled: true,           /* enabled only in edit mode */
+        disabled: true,
         onEnd() { saveOrder(el, key); }
       });
     });
 
-    /* ── toggle edit mode ── */
     btnEdit.addEventListener('click', () => {
       editMode = !editMode;
       document.body.classList.toggle('edit-mode', editMode);
@@ -483,7 +559,6 @@
       });
     });
 
-    /* ── reset ── */
     btnReset.addEventListener('click', () => {
       if (!confirm('Przywrócić domyślną kolejność kafelków?')) return;
       GRIDS.forEach(({ key }) => localStorage.removeItem(key));
